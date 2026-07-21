@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Collection</title>
+</head>
+<body>
+    <p>
+        <a href="{% url 'endpoints:endpoint-create' %}">
+            Add endpoint
+        </a>
+    </p>
+    <h1>Saved API Endpoints</h1>
+
+    <ul>
+        {% for endpoint in endpoints %}
+            <li>
+                <strong>{{ endpoint.method }}</strong>
+                {{ endpoint.name }} —
+                {{ endpoint.url }}
+            </li>
+        {% empty %}
+            <li>No API endpoints have been saved.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

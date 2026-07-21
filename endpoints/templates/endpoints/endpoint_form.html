@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add API Endpoint</title>
+</head>
+<body>
+    <h1>Add API Endpoint</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Save endpoint</button>
+    </form>
+
+    <p>
+        <a href="{% url 'endpoints:endpoint-list' %}">
+            Back to endpoints
+        </a>
+    </p>
+</body>
+</html>
