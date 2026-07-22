@@ -2,23 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add API Endpoint</title>
+
+    <title>
+        {% if endpoint %}
+            Edit {{ endpoint.name }}
+        {% else %}
+            Add API Endpoint
+        {% endif %}
+    </title>
 </head>
 <body>
-    <h1>Add API Endpoint</h1>
+    <h1>
+        {% if endpoint %}
+            Edit {{ endpoint.name }}
+        {% else %}
+            Add API Endpoint
+        {% endif %}
+    </h1>
 
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
 
-        <button type="submit">Save endpoint</button>
+        <button type="submit">
+            {% if endpoint %}
+                Save changes
+            {% else %}
+                Save endpoint
+            {% endif %}
+        </button>
     </form>
 
     <p>
-        <a href="{% url 'endpoints:endpoint-list' %}">
-            Back to endpoints
-        </a>
+        {% if endpoint %}
+            <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
+                Cancel
+            </a>
+        {% else %}
+            <a href="{% url 'endpoints:endpoint-list' %}">
+                Cancel
+            </a>
+        {% endif %}
     </p>
 </body>
 </html>

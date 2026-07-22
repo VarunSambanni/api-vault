@@ -16,7 +16,10 @@
         {% for endpoint in endpoints %}
             <li>
                 <strong>{{ endpoint.method }}</strong>
-                {{ endpoint.name }} —
+                <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
+                    {{ endpoint.name }}
+                </a>
+                —
                 {{ endpoint.url }}
             </li>
         {% empty %}

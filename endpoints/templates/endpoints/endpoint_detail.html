@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ endpoint.name }}</title>
+</head>
+<body>
+    <h1>{{ endpoint.name }}</h1>
+
+    <dl>
+        <dt>HTTP method</dt>
+        <dd>{{ endpoint.method }}</dd>
+
+        <dt>URL</dt>
+        <dd>{{ endpoint.url }}</dd>
+
+        <dt>Notes</dt>
+        <dd>
+            {% if endpoint.notes %}
+                {{ endpoint.notes }}
+            {% else %}
+                No notes provided.
+            {% endif %}
+        </dd>
+
+        <dt>Created</dt>
+        <dd>{{ endpoint.created_at }}</dd>
+
+        <dt>Last updated</dt>
+        <dd>{{ endpoint.updated_at }}</dd>
+    </dl>
+    <p>
+        <a href="{% url 'endpoints:endpoint-update' endpoint.pk %}">
+            Edit endpoint
+        </a>
+    </p>
+    <p>
+        <a href="{% url 'endpoints:endpoint-list' %}">
+            Back to endpoints
+        </a>
+    </p>
+
+</body>
+</html>
