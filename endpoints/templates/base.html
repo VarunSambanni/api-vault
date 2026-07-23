@@ -9,12 +9,19 @@
     <title>
         {% block title %}API Vault{% endblock %}
     </title>
-
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <header>
         <nav>
+            {% if user.is_authenticated %}
+            <span>Signed in as {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            {% endif %}
             <a href="{% url 'endpoints:endpoint-list' %}">
                 API Vault
             </a>

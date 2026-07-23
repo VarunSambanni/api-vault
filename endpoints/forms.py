@@ -29,3 +29,6 @@ class APIEndpointForm(forms.ModelForm):
 
         return headers
 
+class APIEndpointAdminForm(APIEndpointForm):
+    class Meta(APIEndpointForm.Meta):
+        fields = ("owner",) + APIEndpointForm.Meta.fields
