@@ -26,6 +26,42 @@
 
         <dt>Last updated</dt>
         <dd>{{ endpoint.updated_at }}</dd>
+
+        <dt>Favorite</dt>
+        <dd>
+            {% if endpoint.is_favorite %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </dd>
+
+        <dt>Headers</dt>
+        <dd>
+            {% if endpoint.headers %}
+                <pre>{{ endpoint.headers }}</pre>
+            {% else %}
+                No headers.
+            {% endif %}
+        </dd>
+
+        <dt>Request body</dt>
+        <dd>
+            {% if endpoint.request_body %}
+                <pre>{{ endpoint.request_body }}</pre>
+            {% else %}
+                No request body.
+            {% endif %}
+        </dd>
+
+        <dt>Sample response</dt>
+        <dd>
+            {% if endpoint.sample_response %}
+                <pre>{{ endpoint.sample_response }}</pre>
+            {% else %}
+                No sample response.
+            {% endif %}
+        </dd>
     </dl>
 
     <p>

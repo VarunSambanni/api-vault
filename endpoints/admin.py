@@ -1,9 +1,17 @@
 from django.contrib import admin
 from .models import APIEndpoint
+from .forms import APIEndpointForm
 
 @admin.register(APIEndpoint)
 class APIEndpointAdmin(admin.ModelAdmin):
-    list_display = ('name', 'method', 'created_at', 'updated_at')
-    list_filter = ('method', 'created_at')
+    form = APIEndpointForm
+    list_display = (
+        "name",
+        "method",
+        "is_favorite",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("method", "is_favorite", "created_at")
     search_fields = ("name", "url", "notes")
-    ordering = ('-created_at',)
+    ordering = ("-created_at",)

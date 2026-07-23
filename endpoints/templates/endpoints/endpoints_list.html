@@ -15,6 +15,10 @@
                 </a>
 
                 — {{ endpoint.url }}
+
+                {% if endpoint.is_favorite %}
+                    ★
+                {% endif %}
             </li>
         {% empty %}
             <li>No API endpoints have been saved.</li>
