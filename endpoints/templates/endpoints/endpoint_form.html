@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends "base.html" %}
 
-    <title>
-        {% if endpoint %}
-            Edit {{ endpoint.name }}
-        {% else %}
-            Add API Endpoint
-        {% endif %}
-    </title>
-</head>
-<body>
+{% block title %}
+    {% if endpoint %}
+        Edit {{ endpoint.name }}
+    {% else %}
+        Add Endpoint
+    {% endif %}
+    | API Vault
+{% endblock %}
+
+{% block content %}
     <h1>
         {% if endpoint %}
             Edit {{ endpoint.name }}
@@ -44,5 +42,4 @@
             </a>
         {% endif %}
     </p>
-</body>
-</html>
+{% endblock %}

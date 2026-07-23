@@ -1,9 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-
 from .forms import APIEndpointForm
-from .models import APIEndpoint
-
 from endpoints.models import APIEndpoint
 
 def endpoint_create(request):
@@ -31,6 +27,16 @@ def endpoint_detail(request, pk):
 
     return render(request, "endpoints/endpoint_detail.html", context)
 
+def endpoint_delete(request, pk):
+        endpoint = get_object_or_404(APIEndpoint, pk=pk)
+        if request.method == "POST":
+            endpoint.delete()
+            return redirect("endpoints:endpoint-list")
+
+        context = {"endpoint": endpoint}
+
+        return render(request, "endpoints/endpoint_confirm_delete.html", context)
+
 def endpoint_update(request, pk):
     endpoint = get_object_or_404(APIEndpoint, pk=pk)
 
@@ -50,3 +56,6 @@ def endpoint_update(request, pk):
     context = {"form": form, "endpoint": endpoint}
 
     return render(request, "endpoints/endpoint_form.html", context)
+
+
+
