@@ -9,6 +9,8 @@ class APIEndpointForm(forms.ModelForm):
             "name",
             "method",
             "url",
+            "category",
+            "tags",
             "headers",
             "request_body",
             "sample_response",

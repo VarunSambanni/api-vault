@@ -62,6 +62,24 @@
                 No sample response.
             {% endif %}
         </dd>
+
+        <dt>Category</dt>
+        <dd>
+            {% if endpoint.category %}
+                {{ endpoint.category.name }}
+            {% else %}
+                Uncategorized
+            {% endif %}
+        </dd>
+
+        <dt>Tags</dt>
+        <dd>
+            {% for tag in endpoint.tags.all %}
+                {{ tag.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No tags
+            {% endfor %}
+        </dd>
     </dl>
 
     <p>

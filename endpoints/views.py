@@ -16,13 +16,19 @@ def endpoint_create(request):
     return render(request,"endpoints/endpoint_form.html", context)
 
 def endpoint_list(request):
-    endpoints = APIEndpoint.objects.all().order_by('-created_at')
+    endpoints = APIEndpoint.objects.select_related("category").prefetch_related("tags").order_by("-created_at")
+
     context = {"endpoints": endpoints}
 
     return render(request, "endpoints/endpoints_list.html", context)
 
 def endpoint_detail(request, pk):
-    endpoint = get_object_or_404(APIEndpoint, pk=pk)
+    endpoints = (
+        APIEndpoint.objects
+        .select_related("category")
+        .prefetch_related("tags")
+    )
+    endpoint = get_object_or_404(endpoints, pk=pk)
     context = {"endpoint": endpoint}
 
     return render(request, "endpoints/endpoint_detail.html", context)

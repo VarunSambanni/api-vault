@@ -1,6 +1,15 @@
 from django.contrib import admin
-from .models import APIEndpoint
 from .forms import APIEndpointForm
+from .models import APIEndpoint, Category, Tag
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
 
 @admin.register(APIEndpoint)
 class APIEndpointAdmin(admin.ModelAdmin):
@@ -8,10 +17,18 @@ class APIEndpointAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "method",
+        "category",
         "is_favorite",
         "created_at",
         "updated_at",
     )
-    list_filter = ("method", "is_favorite", "created_at")
+    list_filter = (
+        "method",
+        "category",
+        "tags",
+        "is_favorite",
+        "created_at",
+    )
     search_fields = ("name", "url", "notes")
+    filter_horizontal = ("tags",)
     ordering = ("-created_at",)

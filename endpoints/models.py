@@ -1,5 +1,25 @@
 from django.db import models
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name_plural = "categories"
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
 class APIEndpoint(models.Model):
     class HTTPMethod(models.TextChoices):
         GET = "GET", "GET"
@@ -17,6 +37,19 @@ class APIEndpoint(models.Model):
     request_body = models.JSONField(default=dict, blank=True)
     sample_response = models.JSONField(default=dict, blank=True)
     is_favorite = models.BooleanField(default=False)
+
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="endpoints",
+    )
+    tags = models.ManyToManyField(
+        Tag,
+        blank=True,
+        related_name="endpoints",
+    )
 
     def __str__(self):
         return self.name

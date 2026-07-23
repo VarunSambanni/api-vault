@@ -8,6 +8,9 @@
     <ul>
         {% for endpoint in endpoints %}
             <li>
+                {% if endpoint.is_favorite %}
+                    <strong title="Favorite">★</strong>
+                {% endif %}
                 <strong>{{ endpoint.method }}</strong>
 
                 <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
@@ -19,6 +22,24 @@
                 {% if endpoint.is_favorite %}
                     ★
                 {% endif %}
+
+                <p>
+                    Category:
+                    {% if endpoint.category %}
+                        {{ endpoint.category.name }}
+                    {% else %}
+                        Uncategorized
+                    {% endif %}
+                </p>
+                <p>
+                    Tags:
+                    {% for tag in endpoint.tags.all %}
+                        {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No tags
+                    {% endfor %}
+                </p>
+
             </li>
         {% empty %}
             <li>No API endpoints have been saved.</li>
