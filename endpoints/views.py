@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def endpoint_create(request):
     if request.method == "POST":
-        form = APIEndpointForm(request.POST)
+        form = APIEndpointForm(request.POST, user=request.user)
         if form.is_valid():
             endpoint = form.save(commit=False)
             endpoint.owner = request.user
@@ -14,7 +14,7 @@ def endpoint_create(request):
             form.save_m2m()
             return redirect("endpoints:endpoint-list")
     else:
-        form = APIEndpointForm()
+        form = APIEndpointForm(user=request.user)
 
     return render(request,"endpoints/endpoint_form.html", {"form": form})
 
@@ -50,7 +50,7 @@ def endpoint_update(request, pk):
     endpoint = get_object_or_404(APIEndpoint, pk=pk, owner=request.user)
 
     if request.method == "POST":
-        form = APIEndpointForm(request.POST, instance=endpoint)
+        form = APIEndpointForm(request.POST, instance=endpoint, user=request.user)
 
         if form.is_valid():
             updated_endpoint = form.save()
@@ -60,7 +60,7 @@ def endpoint_update(request, pk):
                 pk=updated_endpoint.pk,
             )
     else:
-        form = APIEndpointForm(instance=endpoint)
+        form = APIEndpointForm(instance=endpoint, user=request.user)
 
     context = {"form": form, "endpoint": endpoint}
 

@@ -4,12 +4,16 @@ from .models import APIEndpoint, Category, Tag
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    search_fields = ("name",)
+    list_display = ("name", "owner")
+    list_filter = ("owner",)
+    search_fields = ("name", "owner__username")
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    search_fields = ("name",)
+    list_display = ("name", "owner")
+    list_filter = ("owner",)
+    search_fields = ("name", "owner__username")
 
 @admin.register(APIEndpoint)
 class APIEndpointAdmin(admin.ModelAdmin):
