@@ -2,6 +2,40 @@ from django import forms
 from .models import APIEndpoint, Category, Tag
 from django.core.exceptions import ValidationError
 
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ("name",)
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+
+        if Category.objects.filter(owner = self.user, name__iexact=name).exists():
+            raise ValidationError("You already have a category with this name")
+
+        return name
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ("name",)
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+
+        if Tag.objects.filter(owner=self.user, name__iexact=name).exists():
+            raise ValidationError("You already have a tag with this name")
+
+        return name
+
 class APIEndpointForm(forms.ModelForm):
     class Meta:
         model = APIEndpoint

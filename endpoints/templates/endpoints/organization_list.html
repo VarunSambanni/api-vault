@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Categories and Tags | API Vault{% endblock %}
+
+{% block content %}
+    <h1>Categories and Tags</h1>
+
+    <section>
+        <h2>Categories</h2>
+
+        <form
+            method="post"
+            action="{% url 'endpoints:category-create' %}"
+        >
+            {% csrf_token %}
+            {{ category_form.as_p }}
+            <button type="submit">Add category</button>
+        </form>
+
+        <ul>
+            {% for category in categories %}
+                <li>{{ category.name }}</li>
+            {% empty %}
+                <li>No categories yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section>
+        <h2>Tags</h2>
+
+        <form
+            method="post"
+            action="{% url 'endpoints:tag-create' %}"
+        >
+            {% csrf_token %}
+            {{ tag_form.as_p }}
+            <button type="submit">Add tag</button>
+        </form>
+
+        <ul>
+            {% for tag in tags %}
+                <li>{{ tag.name }}</li>
+            {% empty %}
+                <li>No tags yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

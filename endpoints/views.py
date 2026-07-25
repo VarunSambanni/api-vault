@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import APIEndpointForm
+from .forms import APIEndpointForm, CategoryForm, TagForm
 from endpoints.models import APIEndpoint
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .models import APIEndpoint, Category, Tag
 
 @login_required
 def endpoint_create(request):
@@ -66,5 +68,47 @@ def endpoint_update(request, pk):
 
     return render(request, "endpoints/endpoint_form.html", context)
 
+@login_required
+def organization_list(request):
+    return render(request, "endpoints/organization_list.html", organization_context(request.user))
 
+def organization_context(user, category_form=None, tag_form=None):
+    return {
+        "categories": Category.objects.filter(owner=user),
+        "tags": Tag.objects.filter(owner=user),
+        "category_form": category_form or CategoryForm(user=user),
+        "tag_form": tag_form or TagForm(user=user),
+    }
+
+@login_required
+@require_POST
+def category_create(request):
+    form = CategoryForm(request.POST, user=request.user)
+
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.owner = request.user
+        category.save()
+
+        return redirect("endpoints:organization-list")
+
+    context = organization_context(request.user, category_form=form)
+
+    return render(request, "endpoints/organization_list.html",context,)
+
+@login_required
+@require_POST
+def tag_create(request):
+    form = TagForm(request.POST, user=request.user)
+
+    if form.is_valid():
+        tag = form.save(commit=False)
+        tag.owner = request.user
+        tag.save()
+
+        return redirect("endpoints:organization-list")
+
+    context = organization_context(request.user, tag_form=form)
+
+    return render(request, "endpoints/organization_list.html",context,)
 
