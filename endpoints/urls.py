@@ -13,5 +13,6 @@ urlpatterns = [
     path("tags/<int:pk>/delete/", views.tag_delete, name="tag-delete"),
     path("<int:pk>/edit/", views.endpoint_update, name="endpoint-update"),
     path("<int:pk>/delete/", views.endpoint_delete, name="endpoint-delete"),
+    path("<int:pk>/try/", views.endpoint_try, name="endpoint-try"),
     path("<int:pk>/", views.endpoint_detail, name="endpoint-detail")
 ]

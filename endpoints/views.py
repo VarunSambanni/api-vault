@@ -6,6 +6,47 @@ from django.views.decorators.http import require_POST
 from .models import APIEndpoint, Category, Tag
 from django.db.models import Q
 from django.core.paginator import Paginator
+import json
+import requests
+
+@login_required
+@require_POST
+def endpoint_try(request, pk):
+    endpoint = get_object_or_404(APIEndpoint, pk=pk, owner=request.user)
+
+    request_options = {
+        "method": endpoint.method,
+        "url": endpoint.url,
+        "headers": endpoint.headers or {},
+        "timeout" : 10,
+    }
+
+    if endpoint.method in {"POST", "PUT", "DELETE"}:
+        request_options["json"] = endpoint.request_body or {}
+
+    try:
+        response = requests.request(**request_options)
+        try :
+            response_body = json.dumps(response.json(), indent=2)
+        except ValueError:
+            response_body = response.text
+
+        try_result = {
+            "status_code": response.status_code,
+            "body": response_body,
+            "headers": dict(response.headers),
+            "response_time_ms": round(
+                response.elapsed.total_seconds() * 1000,
+                2,
+            ),
+        }
+
+        context = {"endpoint": endpoint, "try_result": try_result}
+
+    except requests.RequestException as error:
+        context = {"endpoint": endpoint, "try_error": str(error)}
+
+    return render(request, "endpoints/endpoint_detail.html", context)
 
 @login_required
 def endpoint_create(request):
@@ -51,7 +92,7 @@ def endpoint_list(request):
 
     endpoints = endpoints.distinct().order_by("-created_at")
 
-    paginator = Paginator(endpoints, 2)
+    paginator = Paginator(endpoints, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 

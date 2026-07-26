@@ -92,6 +92,52 @@
         </a>
     </p>
 
+    <form
+        method="post"
+        action="{% url 'endpoints:endpoint-try' endpoint.pk %}"
+        onsubmit="return confirm('Send this API request?');"
+    >
+        {% csrf_token %}
+        <button type="submit">
+            Try API
+        </button>
+    </form>
+
+    {% if try_result %}
+        <section>
+            <h2>API response</h2>
+
+            <dl>
+                <dt>Status code</dt>
+                <dd>{{ try_result.status_code }}</dd>
+
+                <dt>Response time</dt>
+                <dd>{{ try_result.response_time_ms }} ms</dd>
+            </dl>
+
+            <h3>Response headers</h3>
+
+            <dl>
+                {% for name, value in try_result.headers.items %}
+                    <dt>{{ name }}</dt>
+                    <dd>{{ value }}</dd>
+                {% empty %}
+                    <dd>No response headers.</dd>
+                {% endfor %}
+            </dl>
+
+            <h3>Response body</h3>
+            <pre>{{ try_result.body }}</pre>
+        </section>
+    {% endif %}
+
+    {% if try_error %}
+        <section>
+            <h2>Request failed</h2>
+            <p>{{ try_error }}</p>
+        </section>
+    {% endif %}
+
     <p>
         <a href="{% url 'endpoints:endpoint-list' %}">
             Back to endpoints
