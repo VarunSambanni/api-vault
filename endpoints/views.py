@@ -4,6 +4,7 @@ from endpoints.models import APIEndpoint
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import APIEndpoint, Category, Tag
+from django.db.models import Q
 
 @login_required
 def endpoint_create(request):
@@ -22,8 +23,46 @@ def endpoint_create(request):
 
 @login_required
 def endpoint_list(request):
-    endpoints = APIEndpoint.objects.filter(owner=request.user).select_related("category").prefetch_related("tags").order_by("-created_at")
-    return render(request, "endpoints/endpoints_list.html", {"endpoints": endpoints})
+    endpoints = APIEndpoint.objects.filter(owner=request.user).select_related("category").prefetch_related("tags")
+    query = request.GET.get("q", "").strip()
+    method = request.GET.get("method", "")
+    category_value = request.GET.get("category", "")
+    tag_value = request.GET.get("tag", "")
+    favorite_only = request.GET.get("favorite") == "1"
+
+    category_id = (int(category_value) if category_value.isdigit() else None)
+    tag_id = (int(tag_value) if tag_value.isdigit() else None)
+
+    if query:
+        endpoints = endpoints.filter(Q(name__icontains=query) | Q(url__icontains=query) | Q(notes__icontains=query))
+
+    if method in APIEndpoint.HTTPMethod.values:
+        endpoints = endpoints.filter(method=method)
+
+    if category_id is not None:
+        endpoints = endpoints.filter(category__id=category_id)
+
+    if tag_id is not None:
+        endpoints = endpoints.filter(tags__id=tag_id)
+
+    if favorite_only:
+        endpoints = endpoints.filter(is_favorite=True)
+
+    endpoints = endpoints.distinct().order_by("-created_at")
+
+    context = {
+        "endpoints": endpoints,
+        "categories": Category.objects.filter(owner=request.user),
+        "tags": Tag.objects.filter(owner=request.user),
+        "method_choices": APIEndpoint.HTTPMethod.choices,
+        "query": query,
+        "selected_method": method,
+        "selected_category_id": category_id,
+        "selected_tag_id": tag_id,
+        "favorite_only": favorite_only,
+    }
+
+    return render(request, "endpoints/endpoints_list.html", context)
 
 @login_required
 def endpoint_detail(request, pk):

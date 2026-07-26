@@ -4,7 +4,84 @@
 
 {% block content %}
     <h1>Saved API Endpoints</h1>
+    <form method="get">
+        <p>
+            <label for="search">Search</label>
+            <input
+                id="search"
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="Name, URL, or notes"
+            >
+        </p>
 
+        <p>
+            <label for="method">HTTP method</label>
+            <select id="method" name="method">
+                <option value="">All methods</option>
+
+                {% for value, label in method_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if selected_method == value %}selected{% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                <option value="">All categories</option>
+
+                {% for category in categories %}
+                    <option
+                        value="{{ category.pk }}"
+                        {% if selected_category_id == category.pk %}selected{% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label for="tag">Tag</label>
+            <select id="tag" name="tag">
+                <option value="">All tags</option>
+
+                {% for tag in tags %}
+                    <option
+                        value="{{ tag.pk }}"
+                        {% if selected_tag_id == tag.pk %}selected{% endif %}
+                    >
+                        {{ tag.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label>
+                <input
+                    type="checkbox"
+                    name="favorite"
+                    value="1"
+                    {% if favorite_only %}checked{% endif %}
+                >
+                Favorites only
+            </label>
+        </p>
+
+        <button type="submit">Apply filters</button>
+
+        <a href="{% url 'endpoints:endpoint-list' %}">
+            Clear filters
+        </a>
+    </form>
     <ul>
         {% for endpoint in endpoints %}
             <li>
