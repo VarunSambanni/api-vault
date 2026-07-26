@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import APIEndpoint, Category, Tag
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 @login_required
 def endpoint_create(request):
@@ -50,8 +51,13 @@ def endpoint_list(request):
 
     endpoints = endpoints.distinct().order_by("-created_at")
 
+    paginator = Paginator(endpoints, 2)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "endpoints": endpoints,
+        "endpoints": page_obj,
+        "page_obj": page_obj,
         "categories": Category.objects.filter(owner=request.user),
         "tags": Tag.objects.filter(owner=request.user),
         "method_choices": APIEndpoint.HTTPMethod.choices,
