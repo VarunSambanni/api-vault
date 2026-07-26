@@ -32,3 +32,7 @@ button {
 textarea {
     min-height: 8rem;
 }
+
+.inline-form {
+    display: inline;
+}
