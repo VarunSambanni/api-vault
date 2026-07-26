@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .models import APIEndpoint
 from unittest.mock import Mock, patch
+import requests
 
 class EndpointListTests(TestCase):
     def setUp(self):
@@ -101,3 +102,24 @@ class  EndpointTryTests(TestCase):
             headers={"X-Test": "API Vault"},
             timeout=10,
         )
+
+    @patch("endpoints.views.requests.request")
+    def test_try_endpoint_displays_network_error(self, mock_request):
+        mock_request.side_effect = requests.Timeout(
+            "The request timed out"
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse(
+                "endpoints:endpoint-try",
+                args=[self.endpoint.pk],
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["try_error"],
+            "The request timed out",
+        )
+        self.assertContains(response, "Request failed")
+        self.assertContains(response, "The request timed out")
