@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .models import APIEndpoint
+from unittest.mock import Mock, patch
 
 class EndpointListTests(TestCase):
     def setUp(self):
@@ -46,3 +47,57 @@ class EndpointListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.own_endpoint.name)
         self.assertNotContains(response, self.other_endpoint.name)
+
+class  EndpointTryTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.user = user_model.objects.create_user(
+            username="owner",
+            password="test-password-123",
+        )
+        self.endpoint = APIEndpoint.objects.create(
+            owner=self.user,
+            name="Test API",
+            method="GET",
+            url="https://example.com/api",
+            headers={"X-Test": "API Vault"},
+        )
+
+    @patch("endpoints.views.requests.request")
+    def test_try_endpoint_displays_response(self, mock_request):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.headers = {
+            "Content-Type": "application/json",
+        }
+        mock_response.json.return_value = {
+            "message": "Success",
+        }
+        mock_response.elapsed.total_seconds.return_value = 0.125
+        mock_request.return_value = mock_response
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse(
+                "endpoints:endpoint-try",
+                args=[self.endpoint.pk],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["try_result"]["status_code"],
+            200,
+        )
+        self.assertEqual(
+            response.context["try_result"]["response_time_ms"],
+            125.0,
+        )
+        self.assertContains(response, "Success")
+
+        mock_request.assert_called_once_with(
+            method="GET",
+            url="https://example.com/api",
+            headers={"X-Test": "API Vault"},
+            timeout=10,
+        )
