@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import APIEndpointForm, CategoryForm, TagForm
-from endpoints.models import APIEndpoint
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import APIEndpoint, Category, Tag
