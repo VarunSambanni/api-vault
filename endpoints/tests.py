@@ -4,6 +4,51 @@ from django.urls import reverse
 from .models import APIEndpoint
 from unittest.mock import Mock, patch
 import requests
+from rest_framework import status
+from rest_framework.test import APIClient
+
+
+class APIEndpointTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+
+        self.user = user_model.objects.create_user(
+            username="api-owner",
+            password="test-password-123",
+        )
+
+        self.api_client = APIClient()
+        self.api_client.force_authenticate(user=self.user)
+
+    def test_authenticated_user_can_create_endpoint(self):
+        payload = {
+            "name": "Created through API",
+            "method": "POST",
+            "url": "https://example.com/api",
+            "headers": {
+                "X-Test": "DRF",
+            },
+            "request_body": {
+                "name": "Varun",
+            },
+            "sample_response": {},
+            "notes": "Created during an API test",
+            "is_favorite": True,
+        }
+
+        response = self.api_client.post(
+            reverse("api:endpoint-list"),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        created_endpoint = APIEndpoint.objects.get(pk=response.data["id"],)
+        self.assertEqual(created_endpoint.owner, self.user)
+        self.assertEqual(created_endpoint.name, payload["name"])
+        self.assertEqual(created_endpoint.request_body, payload["request_body"])
+
 
 class EndpointListTests(TestCase):
     def setUp(self):
