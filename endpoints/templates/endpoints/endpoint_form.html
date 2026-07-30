@@ -10,36 +10,42 @@
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {% if endpoint %}
-            Edit {{ endpoint.name }}
-        {% else %}
-            Add API Endpoint
-        {% endif %}
-    </h1>
+    <div class="content-narrow">
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">{% if endpoint %}Update request{% else %}New request{% endif %}</p>
+                <h1>
+                    {% if endpoint %}
+                        Edit {{ endpoint.name }}
+                    {% else %}
+                        Add API endpoint
+                    {% endif %}
+                </h1>
+            </div>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+        <form class="form-card" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-        <button type="submit">
-            {% if endpoint %}
-                Save changes
-            {% else %}
-                Save endpoint
-            {% endif %}
-        </button>
-    </form>
-
-    <p>
-        {% if endpoint %}
-            <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
-                Cancel
-            </a>
-        {% else %}
-            <a href="{% url 'endpoints:endpoint-list' %}">
-                Cancel
-            </a>
-        {% endif %}
-    </p>
+            <div class="form-actions">
+                <button type="submit">
+                    {% if endpoint %}
+                        Save changes
+                    {% else %}
+                        Save endpoint
+                    {% endif %}
+                </button>
+                {% if endpoint %}
+                    <a class="button button-secondary" href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
+                        Cancel
+                    </a>
+                {% else %}
+                    <a class="button button-secondary" href="{% url 'endpoints:endpoint-list' %}">
+                        Cancel
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
 {% endblock %}

@@ -3,12 +3,20 @@
 {% block title %}Categories and Tags | API Vault{% endblock %}
 
 {% block content %}
-    <h1>Categories and Tags</h1>
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">Organization</p>
+            <h1>Categories and tags</h1>
+            <p class="page-intro">Keep your saved requests easy to browse.</p>
+        </div>
+    </div>
 
-    <section>
+    <div class="organization-grid">
+    <section class="panel">
         <h2>Categories</h2>
 
         <form
+            class="compact-form"
             method="post"
             action="{% url 'endpoints:category-create' %}"
         >
@@ -17,28 +25,30 @@
             <button type="submit">Add category</button>
         </form>
 
-        <ul>
+        <ul class="management-list">
             {% for category in categories %}
-            <li>{{ category.name }}
+            <li>
+                <span>{{ category.name }}</span>
                 <form
                     method="post"
                     action="{% url 'endpoints:category-delete' category.pk %}"
                     class="inline-form"
                 >
                     {% csrf_token %}
-                    <button type="submit">Delete</button>
+                    <button class="button button-danger-quiet" type="submit">Delete</button>
                 </form>
             </li>
             {% empty %}
-                <li>No categories yet.</li>
+                <li class="muted">No categories yet.</li>
             {% endfor %}
         </ul>
     </section>
 
-    <section>
+    <section class="panel">
         <h2>Tags</h2>
 
         <form
+            class="compact-form"
             method="post"
             action="{% url 'endpoints:tag-create' %}"
         >
@@ -47,22 +57,23 @@
             <button type="submit">Add tag</button>
         </form>
 
-        <ul>
+        <ul class="management-list">
             {% for tag in tags %}
             <li>
-                {{ tag.name }}
+                <span>{{ tag.name }}</span>
                 <form
                     method="post"
                     action="{% url 'endpoints:tag-delete' tag.pk %}"
                     class="inline-form"
                 >
                     {% csrf_token %}
-                    <button type="submit">Delete</button>
+                    <button class="button button-danger-quiet" type="submit">Delete</button>
                 </form>
             </li>
             {% empty %}
-                <li>No tags yet.</li>
+                <li class="muted">No tags yet.</li>
             {% endfor %}
         </ul>
     </section>
+    </div>
 {% endblock %}

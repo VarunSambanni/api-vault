@@ -3,11 +3,32 @@
 {% block title %}{{ endpoint.name }} | API Vault{% endblock %}
 
 {% block content %}
-    <h1>{{ endpoint.name }}</h1>
+    <div class="page-heading">
+        <div>
+            <div class="heading-meta">
+                <span class="method-badge method-{{ endpoint.method|lower }}">
+                    {{ endpoint.method }}
+                </span>
+                {% if endpoint.is_favorite %}
+                    <span class="favorite">★ Favorite</span>
+                {% endif %}
+            </div>
+            <h1>{{ endpoint.name }}</h1>
+            <code class="endpoint-url endpoint-url--large">{{ endpoint.url }}</code>
+        </div>
+        <div class="form-actions">
+            <a class="button button-secondary" href="{% url 'endpoints:endpoint-update' endpoint.pk %}">
+                Edit
+            </a>
+            <a class="button button-danger-quiet" href="{% url 'endpoints:endpoint-delete' endpoint.pk %}">
+                Delete
+            </a>
+        </div>
+    </div>
 
-    <dl>
+    <dl class="detail-grid panel">
         <dt>HTTP method</dt>
-        <dd>{{ endpoint.method }}</dd>
+        <dd><span class="method-badge method-{{ endpoint.method|lower }}">{{ endpoint.method }}</span></dd>
 
         <dt>URL</dt>
         <dd>{{ endpoint.url }}</dd>
@@ -82,17 +103,8 @@
         </dd>
     </dl>
 
-    <p>
-        <a href="{% url 'endpoints:endpoint-update' endpoint.pk %}">
-            Edit endpoint
-        </a>
-
-        <a href="{% url 'endpoints:endpoint-delete' endpoint.pk %}">
-            Delete endpoint
-        </a>
-    </p>
-
     <form
+        class="try-api-form"
         method="post"
         action="{% url 'endpoints:endpoint-try' endpoint.pk %}"
         onsubmit="return confirm('Send this API request?');"
@@ -104,10 +116,10 @@
     </form>
 
     {% if try_result %}
-        <section>
+        <section class="response-panel">
             <h2>API response</h2>
 
-            <dl>
+            <dl class="response-summary">
                 <dt>Status code</dt>
                 <dd>{{ try_result.status_code }}</dd>
 
@@ -132,15 +144,13 @@
     {% endif %}
 
     {% if try_error %}
-        <section>
+        <section class="error-panel">
             <h2>Request failed</h2>
             <p>{{ try_error }}</p>
         </section>
     {% endif %}
 
-    <p>
-        <a href="{% url 'endpoints:endpoint-list' %}">
-            Back to endpoints
-        </a>
-    </p>
+    <a class="back-link" href="{% url 'endpoints:endpoint-list' %}">
+        ← Back to endpoints
+    </a>
 {% endblock %}

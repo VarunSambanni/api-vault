@@ -3,18 +3,22 @@
 {% block title %}Delete {{ endpoint.name }} | API Vault{% endblock %}
 
 {% block content %}
-    <h1>Delete {{ endpoint.name }}?</h1>
+    <div class="content-narrow">
+        <section class="panel danger-panel">
+            <p class="eyebrow">Confirm deletion</p>
+            <h1>Delete {{ endpoint.name }}?</h1>
 
-    <p>This permanently deletes the saved API endpoint.</p>
+            <p>This permanently deletes the saved API endpoint.</p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Yes, delete endpoint</button>
-    </form>
-
-    <p>
-        <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
-            Cancel
-        </a>
-    </p>
+            <form class="form-actions" method="post">
+                {% csrf_token %}
+                <button class="button button-danger" type="submit">
+                    Yes, delete endpoint
+                </button>
+                <a class="button button-secondary" href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
+                    Cancel
+                </a>
+            </form>
+        </section>
+    </div>
 {% endblock %}

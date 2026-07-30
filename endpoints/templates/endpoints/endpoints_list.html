@@ -3,8 +3,19 @@
 {% block title %}Saved Endpoints | API Vault{% endblock %}
 
 {% block content %}
-    <h1>Saved API Endpoints</h1>
-    <form method="get">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">Your collection</p>
+            <h1>Saved API endpoints</h1>
+            <p class="page-intro">Search, organize, and run the requests you use often.</p>
+        </div>
+        <a class="button" href="{% url 'endpoints:endpoint-create' %}">
+            Add endpoint
+        </a>
+    </div>
+
+    <form class="filter-panel" method="get">
+        <div class="filter-grid">
         <p>
             <label for="search">Search</label>
             <input
@@ -64,7 +75,7 @@
             </select>
         </p>
 
-        <p>
+        <p class="checkbox-field">
             <label>
                 <input
                     type="checkbox"
@@ -75,55 +86,69 @@
                 Favorites only
             </label>
         </p>
+        </div>
 
-        <button type="submit">Apply filters</button>
-
-        <a href="{% url 'endpoints:endpoint-list' %}">
-            Clear filters
-        </a>
+        <div class="form-actions">
+            <button type="submit">Apply filters</button>
+            <a class="button button-secondary" href="{% url 'endpoints:endpoint-list' %}">
+                Clear filters
+            </a>
+        </div>
     </form>
-    <ul>
+
+    <ul class="endpoint-grid">
         {% for endpoint in endpoints %}
-            <li>
-                {% if endpoint.is_favorite %}
-                    <strong title="Favorite">★</strong>
-                {% endif %}
-                <strong>{{ endpoint.method }}</strong>
+            <li class="endpoint-card">
+                <div class="endpoint-card__top">
+                    <span class="method-badge method-{{ endpoint.method|lower }}">
+                        {{ endpoint.method }}
+                    </span>
 
-                <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
-                    {{ endpoint.name }}
-                </a>
-
-                — {{ endpoint.url }}
-
-                {% if endpoint.is_favorite %}
-                    ★
-                {% endif %}
-
-                <p>
-                    Category:
-                    {% if endpoint.category %}
-                        {{ endpoint.category.name }}
-                    {% else %}
-                        Uncategorized
+                    {% if endpoint.is_favorite %}
+                        <strong class="favorite" title="Favorite">★</strong>
                     {% endif %}
-                </p>
-                <p>
-                    Tags:
-                    {% for tag in endpoint.tags.all %}
-                        {{ tag.name }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        No tags
-                    {% endfor %}
-                </p>
+                </div>
 
+                <h2>
+                    <a href="{% url 'endpoints:endpoint-detail' endpoint.pk %}">
+                        {{ endpoint.name }}
+                    </a>
+                </h2>
+
+                <code class="endpoint-url">{{ endpoint.url }}</code>
+
+                <div class="endpoint-meta">
+                    <p>
+                        <span>Category</span>
+                        {% if endpoint.category %}
+                            {{ endpoint.category.name }}
+                        {% else %}
+                            Uncategorized
+                        {% endif %}
+                    </p>
+                    <p>
+                        <span>Tags</span>
+                        {% for tag in endpoint.tags.all %}
+                            {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            No tags
+                        {% endfor %}
+                    </p>
+                </div>
             </li>
         {% empty %}
-            <li>No API endpoints have been saved.</li>
+            <li class="empty-state">
+                <h2>No endpoints yet</h2>
+                <p>Save your first API request to start building your collection.</p>
+                <a class="button" href="{% url 'endpoints:endpoint-create' %}">
+                    Add endpoint
+                </a>
+            </li>
         {% endfor %}
     </ul>
+
     {% if page_obj.has_other_pages %}
-        <nav>
+        <nav class="pagination" aria-label="Pagination">
             {% if page_obj.has_previous %}
                 <a href="{% querystring page=1 %}">First</a>
                 <a href="{% querystring page=page_obj.previous_page_number %}">

@@ -1,40 +1,49 @@
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>
         {% block title %}API Vault{% endblock %}
     </title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <header>
-        <nav>
-            {% if user.is_authenticated %}
-            <span>Signed in as {{ user.username }}</span>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                </form>
-            {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            {% endif %}
-            <a href="{% url 'endpoints:endpoint-list' %}">
-                API Vault
+    <header class="site-header">
+        <nav class="nav-shell" aria-label="Main navigation">
+            <a class="brand" href="{% url 'endpoints:endpoint-list' %}">
+                <span class="brand-mark">AV</span>
+                <span>API Vault</span>
             </a>
-            <a href="{% url 'endpoints:endpoint-create' %}">
-                Add endpoint
-            </a>
-            <a href="{% url 'endpoints:organization-list' %}">
-                Categories and tags
-            </a>
+
+            <div class="nav-links">
+                <a href="{% url 'endpoints:endpoint-list' %}">Endpoints</a>
+                <a href="{% url 'endpoints:endpoint-create' %}">Add endpoint</a>
+                <a href="{% url 'endpoints:organization-list' %}">
+                    Categories &amp; tags
+                </a>
+            </div>
+
+            <div class="account">
+                {% if user.is_authenticated %}
+                    <span>Signed in as <strong>{{ user.username }}</strong></span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="button button-quiet" type="submit">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="button button-quiet" href="{% url 'login' %}">
+                        Login
+                    </a>
+                {% endif %}
+            </div>
         </nav>
     </header>
 
-    <main>
+    <main class="page-shell">
         {% block content %}
         {% endblock %}
     </main>
